@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "578687541373",
+    "project_id": "smartattendance-5779c",
+    "storage_bucket": "smartattendance-5779c.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:578687541373:android:90bba1093d078edc515114",
+        "android_client_info": {
+          "package_name": "uk.ac.tees.mad.smartattendance"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyC-eDO_n-i2gE37SsEQeF5o3ix-qBmo1iA"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
