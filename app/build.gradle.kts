@@ -8,7 +8,7 @@ plugins {
 
 android {
     namespace = "uk.ac.tees.mad.smartattendance"
-    compileSdk = 35
+    compileSdk = 36
 
     defaultConfig {
         applicationId = "uk.ac.tees.mad.smartattendance"
