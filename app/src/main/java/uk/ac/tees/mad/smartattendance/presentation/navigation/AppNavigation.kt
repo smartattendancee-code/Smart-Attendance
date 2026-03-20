@@ -8,6 +8,7 @@ import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import uk.ac.tees.mad.smartattendance.AppViewModelFactory
 import uk.ac.tees.mad.smartattendance.presentation.AppViewModel
+import uk.ac.tees.mad.smartattendance.presentation.screens.HomeScreen
 import uk.ac.tees.mad.smartattendance.presentation.screens.LoginScreen
 import uk.ac.tees.mad.smartattendance.presentation.screens.SignUpScreen
 
@@ -43,6 +44,15 @@ fun AppNavGraph() {
                 factory = AppViewModelFactory(backStackEntry)
             )
             SignUpScreen(
+                navController = navController,
+                viewModel = viewModel
+            )
+        }
+        composable(route = NavRoutes.HOME) { backStackEntry ->
+            val viewModel: AppViewModel = viewModel(
+                factory = AppViewModelFactory(backStackEntry)
+            )
+            HomeScreen(
                 navController = navController,
                 viewModel = viewModel
             )

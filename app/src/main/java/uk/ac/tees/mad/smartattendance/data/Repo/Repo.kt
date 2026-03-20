@@ -1,6 +1,8 @@
 package uk.ac.tees.mad.smartattendance.data.Repo
 
 import com.google.firebase.auth.FirebaseAuth
+import com.google.firebase.firestore.FirebaseFirestore
+import com.google.firebase.firestore.ListenerRegistration
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.channels.awaitClose
@@ -17,7 +19,7 @@ class RepoImpl : Repo {
     private val firestore = FirebaseFirestore.getInstance()
 
 
-    // ---------------- AUTH ----------------
+
 
     override fun registeruserwithemailandpassword(
         userdata: UserData
@@ -123,7 +125,7 @@ class RepoImpl : Repo {
     }
 
 
-    // ---------------- REALTIME OBSERVER ----------------
+
 
     override fun observeAttendance():
             Flow<ResultState<List<AttendanceModel>>> = callbackFlow {
