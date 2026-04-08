@@ -1,6 +1,7 @@
-package uk.ac.tees.mad.smartattendance.presentation.navigation
-object NavRoutes{
-const val SPLASH = "splash"
-const val LOGIN = "login"
-const val SIGNUP = "signup"
-const val HOME = "home"}
+object NavRoutes {
+    const val SPLASH = "splash"
+    const val LOGIN = "login"
+    const val SIGNUP = "signup"
+    const val HOME = "home"
+    const val MARK_ATTENDANCE = "mark_attendance"
+}

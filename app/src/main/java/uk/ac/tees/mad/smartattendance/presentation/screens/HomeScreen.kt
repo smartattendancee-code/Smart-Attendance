@@ -18,7 +18,7 @@ import androidx.navigation.NavController
 import uk.ac.tees.mad.smartattendance.R
 import uk.ac.tees.mad.smartattendance.presentation.AppViewModel
 import uk.ac.tees.mad.smartattendance.presentation.AttendanceState
-import uk.ac.tees.mad.smartattendance.presentation.navigation.NavRoutes
+
 import uk.ac.tees.mad.smartattendance.ui.theme.*
 import java.text.SimpleDateFormat
 import java.util.*
@@ -52,8 +52,9 @@ fun HomeScreen(
         status = todayStatus,
         attendanceState = state,
         onMarkAttendance = {
-            viewModel.markAttendance(todayDateKey, "Present")
-        },
+            navController.navigate(NavRoutes.MARK_ATTENDANCE)
+        }
+        ,
         onLogout = {
             viewModel.logout()
             navController.navigate(NavRoutes.LOGIN) {
@@ -170,7 +171,6 @@ fun HomeContent(
 
             Spacer(modifier = Modifier.height(24.dp))
 
-            // Statistics
             Text(
                 text = "Overview",
                 style = MaterialTheme.typography.titleLarge,
@@ -216,6 +216,27 @@ fun HomeContent(
                     modifier = Modifier.weight(1f)
                 )
             }
+            Spacer(modifier = Modifier.weight(1f))
+
+            Button(
+                onClick = onMarkAttendance,
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .height(56.dp),
+                shape = RoundedCornerShape(16.dp),
+                colors = ButtonDefaults.buttonColors(
+                    containerColor = PrimaryDarkNavy
+                )
+            ) {
+                Text(
+                    text = "Mark Attendance for Another Date",
+                    color = TextWhite,
+                    fontWeight = FontWeight.Bold,
+                    fontSize = 16.sp
+                )
+            }
+
+
         }
     }
 }

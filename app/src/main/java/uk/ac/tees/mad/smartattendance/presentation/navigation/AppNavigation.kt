@@ -10,6 +10,7 @@ import uk.ac.tees.mad.smartattendance.AppViewModelFactory
 import uk.ac.tees.mad.smartattendance.presentation.AppViewModel
 import uk.ac.tees.mad.smartattendance.presentation.screens.HomeScreen
 import uk.ac.tees.mad.smartattendance.presentation.screens.LoginScreen
+import uk.ac.tees.mad.smartattendance.presentation.screens.MarkAttendanceScreen
 import uk.ac.tees.mad.smartattendance.presentation.screens.SignUpScreen
 
 @Composable
@@ -19,7 +20,7 @@ fun AppNavGraph() {
 
     NavHost(
         navController = navController,
-        startDestination = NavRoutes.LOGIN
+        startDestination = NavRoutes.HOME
     ) {
 //        composable(route = NavRoutes.SPLASH) { backStackEntry ->
 //            val viewModel: AppViewModel = viewModel(
@@ -57,6 +58,16 @@ fun AppNavGraph() {
                 viewModel = viewModel
             )
         }
+        composable(route = NavRoutes.MARK_ATTENDANCE) { backStackEntry ->
+            val viewModel: AppViewModel = viewModel(
+                factory = AppViewModelFactory(backStackEntry)
+            )
+            MarkAttendanceScreen(
+                navController = navController,
+                viewModel = viewModel
+            )
+        }
+
     }
 
     }

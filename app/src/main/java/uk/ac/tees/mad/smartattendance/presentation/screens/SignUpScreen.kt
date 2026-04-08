@@ -18,7 +18,7 @@ import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
 import uk.ac.tees.mad.smartattendance.R
 import uk.ac.tees.mad.smartattendance.model.UserData
-import uk.ac.tees.mad.smartattendance.presentation.navigation.NavRoutes
+
 import uk.ac.tees.mad.smartattendance.presentation.AppViewModel
 import uk.ac.tees.mad.smartattendance.ui.theme.*
 
