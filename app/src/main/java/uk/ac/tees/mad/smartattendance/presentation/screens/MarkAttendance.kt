@@ -17,7 +17,8 @@ import androidx.navigation.NavController
 import uk.ac.tees.mad.smartattendance.presentation.AppViewModel
 import uk.ac.tees.mad.smartattendance.ui.theme.*
 import java.text.SimpleDateFormat
-import java.util.*
+import java.util.Date
+import java.util.Locale
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -44,14 +45,26 @@ fun MarkAttendanceScreen(
         state.records.find { record -> record.date == it }
     }
 
+    // 🔥 Fetch latest attendance data
+    LaunchedEffect(Unit) {
+        viewModel.observeAttendance()
+    }
+
     // 🔥 Show Toast if duplicate date selected
-    LaunchedEffect(selectedDateKey) {
+    LaunchedEffect(selectedDateKey, existingRecord) {
         if (selectedDateKey != null && existingRecord != null) {
             Toast.makeText(
                 context,
                 "Attendance already marked for this date",
                 Toast.LENGTH_SHORT
             ).show()
+        }
+    }
+
+    // 🔥 Show Toast if there is an error from ViewModel
+    LaunchedEffect(state.error) {
+        if (state.error != null) {
+            Toast.makeText(context, state.error, Toast.LENGTH_LONG).show()
         }
     }
 
