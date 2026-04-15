@@ -11,6 +11,7 @@ import uk.ac.tees.mad.smartattendance.presentation.AppViewModel
 import uk.ac.tees.mad.smartattendance.presentation.screens.HomeScreen
 import uk.ac.tees.mad.smartattendance.presentation.screens.LoginScreen
 import uk.ac.tees.mad.smartattendance.presentation.screens.MarkAttendanceScreen
+import uk.ac.tees.mad.smartattendance.presentation.screens.SettingScreen
 import uk.ac.tees.mad.smartattendance.presentation.screens.SignUpScreen
 
 @Composable
@@ -67,6 +68,16 @@ fun AppNavGraph() {
                 viewModel = viewModel
             )
         }
+        composable(route = NavRoutes.SETTINGS) { backStackEntry ->
+            val viewModel: AppViewModel = viewModel(
+                factory = AppViewModelFactory(backStackEntry)
+            )
+            SettingScreen(
+                navController = navController,
+                viewModel = viewModel
+            )
+        }
+
 
     }
 

@@ -4,4 +4,6 @@ object NavRoutes {
     const val SIGNUP = "signup"
     const val HOME = "home"
     const val MARK_ATTENDANCE = "mark_attendance"
+    const val SETTINGS = "settings"
+
 }

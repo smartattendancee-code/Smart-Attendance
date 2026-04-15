@@ -4,18 +4,20 @@ import android.annotation.SuppressLint
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Person
+import androidx.compose.material.icons.filled.Settings
 import androidx.compose.material3.*
+import androidx.compose.material3.CenterAlignedTopAppBar
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
-import uk.ac.tees.mad.smartattendance.R
 import uk.ac.tees.mad.smartattendance.presentation.AppViewModel
 import uk.ac.tees.mad.smartattendance.presentation.AttendanceState
 
@@ -29,8 +31,8 @@ fun HomeScreen(
     viewModel: AppViewModel,
     navController: NavController
 ) {
+
     val state = viewModel.attendanceState.value
-    
 
     LaunchedEffect(Unit) {
         viewModel.observeAttendance()
@@ -39,75 +41,82 @@ fun HomeScreen(
     val currentDate = remember { Date() }
     val formatter = SimpleDateFormat("yyyy-MM-dd", Locale.getDefault())
     val displayFormatter = SimpleDateFormat("EEEE, dd MMMM yyyy", Locale.getDefault())
-    
+
     val todayDateKey = formatter.format(currentDate)
     val todayDateDisplay = displayFormatter.format(currentDate)
 
-
     val todayRecord = state.records.find { it.date == todayDateKey }
     val todayStatus = todayRecord?.status ?: "Not Marked"
-    
+
     HomeContent(
         date = todayDateDisplay,
         status = todayStatus,
         attendanceState = state,
         onMarkAttendance = {
             navController.navigate(NavRoutes.MARK_ATTENDANCE)
-        }
-        ,
-        onLogout = {
-            viewModel.logout()
-            navController.navigate(NavRoutes.LOGIN) {
-                popUpTo(NavRoutes.HOME) { inclusive = true }
-            }
+        },
+        onSettingsClick = {
+            navController.navigate(NavRoutes.SETTINGS)
         }
     )
 }
 
+
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun HomeContent(
     date: String,
     status: String,
     attendanceState: AttendanceState,
     onMarkAttendance: () -> Unit,
-    onLogout: () -> Unit
+    onSettingsClick: () -> Unit
 ) {
+
     Box(
         modifier = Modifier
             .fillMaxSize()
             .background(BackgroundMain)
     ) {
+
         Column(
             modifier = Modifier
                 .fillMaxSize()
-                .padding(24.dp)
+                .padding(horizontal = 24.dp)
         ) {
-            
 
-            Row(
-                modifier = Modifier.fillMaxWidth(),
-                horizontalArrangement = Arrangement.SpaceBetween,
-                verticalAlignment = Alignment.CenterVertically
-            ) {
-                Column {
-                    Text(
-                        text = "Hello, User",
-                        style = MaterialTheme.typography.headlineSmall,
-                        color = PrimaryDarkNavy,
-                        fontWeight = FontWeight.Bold
-                    )
-                    Text(
-                        text = date,
-                        style = MaterialTheme.typography.bodyMedium,
-                        color = TextSecondary
-                    )
+            Spacer(modifier = Modifier.height(8.dp))
+
+
+            TopAppBar(
+                title = {
+                    Column(horizontalAlignment = Alignment.Start) {
+                        Text(
+                            text = "Hello, User",
+                            style = MaterialTheme.typography.titleLarge,
+                            fontWeight = FontWeight.Bold,
+                            color = PrimaryDarkNavy
+                        )
+                        Text(
+                            text = date,
+                            style = MaterialTheme.typography.bodySmall,
+                            color = TextSecondary
+                        )
+                    }
+                },
+                actions = {
+                    IconButton(onClick = onSettingsClick) {
+                        Icon(
+                            imageVector = Icons.Default.Settings,
+                            contentDescription = "Settings",
+                            tint = PrimaryDarkNavy
+                        )
+                    }
                 }
+            )
 
-            }
+            Spacer(modifier = Modifier.height(24.dp))
 
-            Spacer(modifier = Modifier.height(32.dp))
 
-            // Today's Status Card
             Card(
                 modifier = Modifier.fillMaxWidth(),
                 shape = RoundedCornerShape(20.dp),
@@ -120,24 +129,28 @@ fun HomeContent(
                         .fillMaxWidth(),
                     horizontalAlignment = Alignment.CenterHorizontally
                 ) {
+
                     Text(
                         text = "Today's Attendance",
                         style = MaterialTheme.typography.titleMedium,
                         color = TextSecondary
                     )
+
                     Spacer(modifier = Modifier.height(8.dp))
+
                     Text(
                         text = status,
                         style = MaterialTheme.typography.headlineMedium,
-                        color = when(status) {
-                            "Present" -> Color(0xFF4CAF50) // Green
+                        color = when (status) {
+                            "Present" -> Color(0xFF4CAF50)
                             "Absent" -> ErrorRed
                             else -> PrimaryNavy
                         },
                         fontWeight = FontWeight.Bold
                     )
+
                     Spacer(modifier = Modifier.height(24.dp))
-                    
+
                     Button(
                         onClick = onMarkAttendance,
                         enabled = status == "Not Marked" && !attendanceState.isLoading,
@@ -149,15 +162,20 @@ fun HomeContent(
                         )
                     ) {
                         if (attendanceState.isLoading) {
-                             CircularProgressIndicator(
+                            CircularProgressIndicator(
                                 color = TextWhite,
                                 modifier = Modifier.size(24.dp)
                             )
                         } else {
-                            Text(text = if (status == "Not Marked") "Mark Present" else "Marked")
+                            Text(
+                                text = if (status == "Not Marked")
+                                    "Mark Present"
+                                else
+                                    "Already Marked"
+                            )
                         }
                     }
-                    
+
                     if (attendanceState.error != null) {
                         Spacer(modifier = Modifier.height(8.dp))
                         Text(
@@ -171,12 +189,14 @@ fun HomeContent(
 
             Spacer(modifier = Modifier.height(24.dp))
 
+            // Overview Section
             Text(
                 text = "Overview",
                 style = MaterialTheme.typography.titleLarge,
                 color = PrimaryDarkNavy,
                 fontWeight = FontWeight.Bold
             )
+
             Spacer(modifier = Modifier.height(16.dp))
 
             Row(
@@ -188,16 +208,18 @@ fun HomeContent(
                     value = attendanceState.totalDays.toString(),
                     modifier = Modifier.weight(1f)
                 )
+
                 Spacer(modifier = Modifier.width(12.dp))
+
                 StatCard(
                     title = "Percentage",
                     value = "${attendanceState.percentage}%",
                     modifier = Modifier.weight(1f)
                 )
             }
-            
+
             Spacer(modifier = Modifier.height(12.dp))
-            
+
             Row(
                 modifier = Modifier.fillMaxWidth(),
                 horizontalArrangement = Arrangement.SpaceBetween
@@ -208,7 +230,9 @@ fun HomeContent(
                     color = Color(0xFF4CAF50),
                     modifier = Modifier.weight(1f)
                 )
+
                 Spacer(modifier = Modifier.width(12.dp))
+
                 StatCard(
                     title = "Absent",
                     value = attendanceState.absentDays.toString(),
@@ -216,8 +240,10 @@ fun HomeContent(
                     modifier = Modifier.weight(1f)
                 )
             }
+
             Spacer(modifier = Modifier.weight(1f))
 
+            // Bottom Button
             Button(
                 onClick = onMarkAttendance,
                 modifier = Modifier
@@ -236,10 +262,11 @@ fun HomeContent(
                 )
             }
 
-
+            Spacer(modifier = Modifier.height(16.dp))
         }
     }
 }
+
 
 @Composable
 fun StatCard(
@@ -248,6 +275,7 @@ fun StatCard(
     modifier: Modifier = Modifier,
     color: Color = PrimaryNavy
 ) {
+
     Card(
         modifier = modifier,
         shape = RoundedCornerShape(16.dp),
@@ -255,15 +283,17 @@ fun StatCard(
         elevation = CardDefaults.cardElevation(defaultElevation = 4.dp)
     ) {
         Column(
-            modifier = Modifier.padding(16.dp),
-            horizontalAlignment = Alignment.Start
+            modifier = Modifier.padding(16.dp)
         ) {
+
             Text(
                 text = title,
                 style = MaterialTheme.typography.bodySmall,
                 color = TextSecondary
             )
+
             Spacer(modifier = Modifier.height(4.dp))
+
             Text(
                 text = value,
                 style = MaterialTheme.typography.headlineSmall,
@@ -273,6 +303,7 @@ fun StatCard(
         }
     }
 }
+
 
 @Preview(showBackground = true)
 @Composable
@@ -287,6 +318,6 @@ fun HomeScreenPreview() {
             percentage = 90
         ),
         onMarkAttendance = {},
-        onLogout = {}
+        onSettingsClick = {}
     )
 }
