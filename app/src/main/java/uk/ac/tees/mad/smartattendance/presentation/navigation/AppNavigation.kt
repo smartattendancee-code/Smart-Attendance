@@ -6,6 +6,7 @@ import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
+import com.google.firebase.auth.FirebaseAuth
 import uk.ac.tees.mad.smartattendance.AppViewModelFactory
 import uk.ac.tees.mad.smartattendance.presentation.AppViewModel
 import uk.ac.tees.mad.smartattendance.presentation.screens.HomeScreen
@@ -18,10 +19,15 @@ import uk.ac.tees.mad.smartattendance.presentation.screens.SignUpScreen
 fun AppNavGraph() {
 
     val navController = rememberNavController()
+    val auth= FirebaseAuth.getInstance()
 
     NavHost(
         navController = navController,
-        startDestination = NavRoutes.HOME
+        startDestination = if(auth.currentUser==null){
+            NavRoutes.LOGIN
+        }else{
+            NavRoutes.HOME
+        }
     ) {
 //        composable(route = NavRoutes.SPLASH) { backStackEntry ->
 //            val viewModel: AppViewModel = viewModel(
