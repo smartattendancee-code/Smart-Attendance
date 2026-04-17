@@ -14,6 +14,7 @@ import uk.ac.tees.mad.smartattendance.presentation.screens.LoginScreen
 import uk.ac.tees.mad.smartattendance.presentation.screens.MarkAttendanceScreen
 import uk.ac.tees.mad.smartattendance.presentation.screens.SettingScreen
 import uk.ac.tees.mad.smartattendance.presentation.screens.SignUpScreen
+import uk.ac.tees.mad.smartattendance.presentation.screens.SplashScreen
 
 @Composable
 fun AppNavGraph() {
@@ -23,21 +24,17 @@ fun AppNavGraph() {
 
     NavHost(
         navController = navController,
-        startDestination = if(auth.currentUser==null){
-            NavRoutes.LOGIN
-        }else{
-            NavRoutes.HOME
-        }
+        startDestination = NavRoutes.SPLASH
     ) {
-//        composable(route = NavRoutes.SPLASH) { backStackEntry ->
-//            val viewModel: AppViewModel = viewModel(
-//                factory = AppViewModelFactory(backStackEntry)
-//            )
-//            SplashScreen(
-//                navController = navController,
-//                viewModel = viewModel
-//            )
-//        }
+        composable(route = NavRoutes.SPLASH) { backStackEntry ->
+            val viewModel: AppViewModel = viewModel(
+                factory = AppViewModelFactory(backStackEntry)
+            )
+            SplashScreen(
+                navController = navController,
+                viewModel = viewModel
+            )
+        }
         composable(route = NavRoutes.LOGIN) { backStackEntry ->
             val viewModel: AppViewModel = viewModel(
                 factory = AppViewModelFactory(backStackEntry)

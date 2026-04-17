@@ -158,6 +158,7 @@ class RepoImpl : Repo {
                     trySend(ResultState.Succes(list))
                 }
 
+
         awaitClose { registration.remove() }
     }
 }
