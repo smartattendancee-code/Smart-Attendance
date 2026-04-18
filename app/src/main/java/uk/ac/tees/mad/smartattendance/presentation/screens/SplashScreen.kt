@@ -9,6 +9,7 @@ import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
@@ -28,7 +29,7 @@ fun SplashScreen(
 
     LaunchedEffect(Unit) {
 
-        delay(1500) // 1.5 second splash delay
+        delay(1500)
 
         if (viewModel.isUserLoggedIn()) {
             navController.navigate(NavRoutes.HOME) {
@@ -57,9 +58,10 @@ fun SplashContent() {
 
         Column(horizontalAlignment = Alignment.CenterHorizontally) {
 
-            Image(
+            Image(modifier = Modifier.height(520.dp),
                 painter = painterResource(id = R.drawable.icon),
-                contentDescription = "App Logo"
+                contentDescription = "App Logo",
+                contentScale = ContentScale.FillHeight
             )
 
             Spacer(modifier = Modifier.height(24.dp))
