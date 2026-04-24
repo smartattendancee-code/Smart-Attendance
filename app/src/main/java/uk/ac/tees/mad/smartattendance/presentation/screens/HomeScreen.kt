@@ -5,10 +5,8 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Person
 import androidx.compose.material.icons.filled.Settings
 import androidx.compose.material3.*
-import androidx.compose.material3.CenterAlignedTopAppBar
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -20,7 +18,6 @@ import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
 import uk.ac.tees.mad.smartattendance.presentation.AppViewModel
 import uk.ac.tees.mad.smartattendance.presentation.AttendanceState
-
 import uk.ac.tees.mad.smartattendance.ui.theme.*
 import java.text.SimpleDateFormat
 import java.util.*
@@ -61,7 +58,6 @@ fun HomeScreen(
     )
 }
 
-
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun HomeContent(
@@ -85,7 +81,6 @@ fun HomeContent(
         ) {
 
             Spacer(modifier = Modifier.height(8.dp))
-
 
             TopAppBar(
                 title = {
@@ -116,12 +111,15 @@ fun HomeContent(
 
             Spacer(modifier = Modifier.height(24.dp))
 
-
+            // MAIN ATTENDANCE CARD (Increased Elevation)
             Card(
                 modifier = Modifier.fillMaxWidth(),
-                shape = RoundedCornerShape(20.dp),
+                shape = RoundedCornerShape(24.dp),
                 colors = CardDefaults.cardColors(containerColor = BackgroundCard),
-                elevation = CardDefaults.cardElevation(defaultElevation = 8.dp)
+                elevation = CardDefaults.cardElevation(
+                    defaultElevation = 12.dp,
+                    pressedElevation = 16.dp
+                )
             ) {
                 Column(
                     modifier = Modifier
@@ -155,7 +153,7 @@ fun HomeContent(
                         onClick = onMarkAttendance,
                         enabled = status == "Not Marked" && !attendanceState.isLoading,
                         modifier = Modifier.fillMaxWidth(),
-                        shape = RoundedCornerShape(12.dp),
+                        shape = RoundedCornerShape(14.dp),
                         colors = ButtonDefaults.buttonColors(
                             containerColor = PrimaryDarkNavy,
                             disabledContainerColor = Color.Gray
@@ -187,9 +185,8 @@ fun HomeContent(
                 }
             }
 
-            Spacer(modifier = Modifier.height(24.dp))
+            Spacer(modifier = Modifier.height(28.dp))
 
-            // Overview Section
             Text(
                 text = "Overview",
                 style = MaterialTheme.typography.titleLarge,
@@ -243,13 +240,12 @@ fun HomeContent(
 
             Spacer(modifier = Modifier.weight(1f))
 
-            // Bottom Button
             Button(
                 onClick = onMarkAttendance,
                 modifier = Modifier
                     .fillMaxWidth()
                     .height(56.dp),
-                shape = RoundedCornerShape(16.dp),
+                shape = RoundedCornerShape(18.dp),
                 colors = ButtonDefaults.buttonColors(
                     containerColor = PrimaryDarkNavy
                 )
@@ -267,7 +263,6 @@ fun HomeContent(
     }
 }
 
-
 @Composable
 fun StatCard(
     title: String,
@@ -278,9 +273,12 @@ fun StatCard(
 
     Card(
         modifier = modifier,
-        shape = RoundedCornerShape(16.dp),
+        shape = RoundedCornerShape(20.dp),
         colors = CardDefaults.cardColors(containerColor = BackgroundCard),
-        elevation = CardDefaults.cardElevation(defaultElevation = 4.dp)
+        elevation = CardDefaults.cardElevation(
+            defaultElevation = 8.dp,
+            pressedElevation = 12.dp
+        )
     ) {
         Column(
             modifier = Modifier.padding(16.dp)
@@ -303,7 +301,6 @@ fun StatCard(
         }
     }
 }
-
 
 @Preview(showBackground = true)
 @Composable
