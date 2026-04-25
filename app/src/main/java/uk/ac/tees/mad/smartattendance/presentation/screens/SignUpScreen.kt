@@ -8,17 +8,16 @@ import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.res.colorResource
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
-import uk.ac.tees.mad.smartattendance.R
 import uk.ac.tees.mad.smartattendance.model.UserData
-
 import uk.ac.tees.mad.smartattendance.presentation.AppViewModel
 import uk.ac.tees.mad.smartattendance.ui.theme.*
 
@@ -35,14 +34,12 @@ fun SignUpScreen(
     var password by remember { mutableStateOf("") }
     var errorMessage by remember { mutableStateOf("") }
 
-    // Navigate on success
     LaunchedEffect(state.success) {
         if (state.success) {
             navController.navigate(NavRoutes.HOME) {
                 popUpTo(NavRoutes.SIGNUP) { inclusive = true }
                 popUpTo(NavRoutes.LOGIN) { inclusive = true }
             }
-            // Reset state? ViewModel doesn't have resetSignUpState but maybe Good to have.
         }
     }
 
@@ -103,26 +100,30 @@ fun SignUpContent(
         Card(
             modifier = Modifier
                 .fillMaxWidth()
-                .padding(24.dp),
-            shape = RoundedCornerShape(20.dp),
+                .padding(24.dp)
+                .shadow(12.dp, RoundedCornerShape(24.dp)),
+            shape = RoundedCornerShape(24.dp),
             colors = CardDefaults.cardColors(
                 containerColor = BackgroundCard
             ),
-            elevation = CardDefaults.cardElevation(defaultElevation = 8.dp)
+            elevation = CardDefaults.cardElevation(
+                defaultElevation = 14.dp
+            )
         ) {
 
             Column(
-                modifier = Modifier.padding(24.dp),
+                modifier = Modifier.padding(28.dp),
                 horizontalAlignment = Alignment.CenterHorizontally
             ) {
 
                 Text(
                     text = "Create Account",
                     style = MaterialTheme.typography.headlineMedium,
+                    fontWeight = FontWeight.Bold,
                     color = PrimaryDarkNavy
                 )
 
-                Spacer(modifier = Modifier.height(6.dp))
+                Spacer(modifier = Modifier.height(8.dp))
 
                 Text(
                     text = "Sign up to get started",
@@ -130,13 +131,14 @@ fun SignUpContent(
                     color = TextSecondary
                 )
 
-                Spacer(modifier = Modifier.height(32.dp))
+                Spacer(modifier = Modifier.height(36.dp))
 
                 OutlinedTextField(
                     value = name,
                     onValueChange = onNameChange,
                     label = { Text("Name") },
                     singleLine = true,
+                    shape = RoundedCornerShape(14.dp),
                     modifier = Modifier.fillMaxWidth(),
                     colors = OutlinedTextFieldDefaults.colors(
                         focusedBorderColor = PrimaryNavy,
@@ -145,13 +147,14 @@ fun SignUpContent(
                     )
                 )
 
-                Spacer(modifier = Modifier.height(16.dp))
+                Spacer(modifier = Modifier.height(18.dp))
 
                 OutlinedTextField(
                     value = email,
                     onValueChange = onEmailChange,
                     label = { Text("Email") },
                     singleLine = true,
+                    shape = RoundedCornerShape(14.dp),
                     keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Email),
                     modifier = Modifier.fillMaxWidth(),
                     colors = OutlinedTextFieldDefaults.colors(
@@ -161,13 +164,14 @@ fun SignUpContent(
                     )
                 )
 
-                Spacer(modifier = Modifier.height(16.dp))
+                Spacer(modifier = Modifier.height(18.dp))
 
                 OutlinedTextField(
                     value = password,
                     onValueChange = onPasswordChange,
                     label = { Text("Password") },
                     singleLine = true,
+                    shape = RoundedCornerShape(14.dp),
                     visualTransformation = PasswordVisualTransformation(),
                     modifier = Modifier.fillMaxWidth(),
                     colors = OutlinedTextFieldDefaults.colors(
@@ -177,7 +181,7 @@ fun SignUpContent(
                     )
                 )
 
-                Spacer(modifier = Modifier.height(16.dp))
+                Spacer(modifier = Modifier.height(18.dp))
 
                 if (!errorMessage.isNullOrEmpty()) {
                     Text(
@@ -187,15 +191,15 @@ fun SignUpContent(
                     )
                 }
 
-                Spacer(modifier = Modifier.height(24.dp))
+                Spacer(modifier = Modifier.height(28.dp))
 
                 Button(
                     onClick = onSignUpClick,
                     enabled = !isLoading,
                     modifier = Modifier
                         .fillMaxWidth()
-                        .height(52.dp),
-                    shape = RoundedCornerShape(14.dp),
+                        .height(54.dp),
+                    shape = RoundedCornerShape(16.dp),
                     colors = ButtonDefaults.buttonColors(
                         containerColor = PrimaryDarkNavy,
                         contentColor = TextWhite
@@ -208,23 +212,27 @@ fun SignUpContent(
                             modifier = Modifier.size(24.dp)
                         )
                     } else {
-                        Text("Sign Up")
+                        Text(
+                            "Sign Up",
+                            fontWeight = FontWeight.Bold,
+                            fontSize = 16.sp
+                        )
                     }
                 }
 
-                Spacer(modifier = Modifier.height(16.dp))
+                Spacer(modifier = Modifier.height(18.dp))
 
                 TextButton(onClick = onLoginClick) {
                     Text(
                         "Already have an account? Login",
-                        color = PrimaryNavy
+                        color = PrimaryNavy,
+                        fontWeight = FontWeight.Medium
                     )
                 }
             }
         }
     }
 }
-
 
 @Preview(showBackground = true)
 @Composable
