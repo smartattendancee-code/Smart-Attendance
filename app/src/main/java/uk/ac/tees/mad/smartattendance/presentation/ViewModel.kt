@@ -18,7 +18,6 @@ class AppViewModel(
     private val auth = FirebaseAuth.getInstance()
 
 
-
     private val _loginScreenState = mutableStateOf(LogInScreenState())
     val loginScreenState = _loginScreenState
 
@@ -166,8 +165,6 @@ class AppViewModel(
     }
 
 
-
-
     fun logout() {
         auth.signOut()
     }
@@ -179,8 +176,18 @@ class AppViewModel(
     fun clearLocalState() {
         _attendanceState.value = AttendanceState()
     }
-}
 
+    private val _settingsState = mutableStateOf<ResultState<String>>(ResultState.Succes(""))
+    val settingsState = _settingsState
+
+    fun clearFirestoreCache() {
+        viewModelScope.launch {
+            repo.clearFirestoreCache().collect { result ->
+                _settingsState.value = result
+            }
+        }
+    }
+}
 
 
 

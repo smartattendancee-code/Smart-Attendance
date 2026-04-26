@@ -161,4 +161,24 @@ class RepoImpl : Repo {
 
         awaitClose { registration.remove() }
     }
+    override fun clearFirestoreCache(): Flow<ResultState<String>> = callbackFlow {
+
+        trySend(ResultState.Loading)
+
+        firestore.terminate().addOnSuccessListener {
+
+            firestore.clearPersistence().addOnSuccessListener {
+
+                trySend(ResultState.Succes("Firestore cache cleared successfully"))
+
+            }.addOnFailureListener {
+                trySend(ResultState.error(it.localizedMessage ?: "Failed to clear cache"))
+            }
+
+        }.addOnFailureListener {
+            trySend(ResultState.error(it.localizedMessage ?: "Failed to terminate Firestore"))
+        }
+
+        awaitClose { close() }
+    }
 }

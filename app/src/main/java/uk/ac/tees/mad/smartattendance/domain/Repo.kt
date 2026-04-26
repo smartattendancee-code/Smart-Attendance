@@ -11,5 +11,6 @@ interface Repo {
     fun markAttendance(date: String, status: String): Flow<ResultState<String>>
 
     fun observeAttendance(): Flow<ResultState<List<AttendanceModel>>>
+    fun clearFirestoreCache(): Flow<ResultState<String>>
 
 }
