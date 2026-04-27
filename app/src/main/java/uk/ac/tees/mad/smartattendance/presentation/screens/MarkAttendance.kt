@@ -12,9 +12,11 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
 import uk.ac.tees.mad.smartattendance.presentation.AppViewModel
+import uk.ac.tees.mad.smartattendance.presentation.AttendanceState
 import uk.ac.tees.mad.smartattendance.ui.theme.*
 import java.text.SimpleDateFormat
 import java.util.Date
@@ -45,12 +47,10 @@ fun MarkAttendanceScreen(
         state.records.find { record -> record.date == it }
     }
 
-    // 🔥 Fetch latest attendance data
     LaunchedEffect(Unit) {
         viewModel.observeAttendance()
     }
 
-    // 🔥 Show Toast if duplicate date selected
     LaunchedEffect(selectedDateKey, existingRecord) {
         if (selectedDateKey != null && existingRecord != null) {
             Toast.makeText(
@@ -61,12 +61,51 @@ fun MarkAttendanceScreen(
         }
     }
 
-    // 🔥 Show Toast if there is an error from ViewModel
     LaunchedEffect(state.error) {
         if (state.error != null) {
             Toast.makeText(context, state.error, Toast.LENGTH_LONG).show()
         }
     }
+
+    MarkAttendanceContent(
+        state = state,
+        selectedDateDisplay = selectedDateDisplay,
+        selectedDateKey = selectedDateKey,
+        existingRecordStatus = existingRecord?.status,
+        selectedStatus = selectedStatus,
+        onSelectDate = { showDatePicker = true },
+        onSelectStatus = { selectedStatus = it },
+        onSave = {
+            if (selectedStatus != null && selectedDateKey != null) {
+                viewModel.markAttendance(selectedDateKey, selectedStatus!!)
+                navController.popBackStack()
+            }
+        },
+        showDatePicker = showDatePicker,
+        onDismissDatePicker = { showDatePicker = false },
+        onConfirmDate = { millis ->
+            selectedDateMillis = millis
+            selectedStatus = null
+            showDatePicker = false
+        }
+    )
+}
+
+@OptIn(ExperimentalMaterial3Api::class)
+@Composable
+fun MarkAttendanceContent(
+    state: AttendanceState,
+    selectedDateDisplay: String?,
+    selectedDateKey: String?,
+    existingRecordStatus: String?,
+    selectedStatus: String?,
+    onSelectDate: () -> Unit,
+    onSelectStatus: (String) -> Unit,
+    onSave: () -> Unit,
+    showDatePicker: Boolean,
+    onDismissDatePicker: () -> Unit,
+    onConfirmDate: (Long?) -> Unit
+) {
 
     Box(
         modifier = Modifier
@@ -86,9 +125,8 @@ fun MarkAttendanceScreen(
 
             Spacer(modifier = Modifier.height(20.dp))
 
-            // Date Picker Button
             Button(
-                onClick = { showDatePicker = true },
+                onClick = onSelectDate,
                 modifier = Modifier.fillMaxWidth(),
                 colors = ButtonDefaults.buttonColors(containerColor = BackgroundCard)
             ) {
@@ -100,7 +138,7 @@ fun MarkAttendanceScreen(
 
             Spacer(modifier = Modifier.height(24.dp))
 
-            if (selectedDateKey != null && existingRecord != null) {
+            if (selectedDateKey != null && existingRecordStatus != null) {
 
                 Card(
                     shape = RoundedCornerShape(16.dp),
@@ -111,8 +149,8 @@ fun MarkAttendanceScreen(
                         horizontalAlignment = Alignment.CenterHorizontally
                     ) {
                         Text(
-                            text = "Attendance already marked as ${existingRecord.status}",
-                            color = if (existingRecord.status == "Present")
+                            text = "Attendance already marked as $existingRecordStatus",
+                            color = if (existingRecordStatus == "Present")
                                 Color(0xFF4CAF50)
                             else ErrorRed,
                             fontWeight = FontWeight.Bold
@@ -132,9 +170,7 @@ fun MarkAttendanceScreen(
                         selected = selectedStatus == "Present",
                         color = Color(0xFF4CAF50),
                         modifier = Modifier.weight(1f)
-                    ) {
-                        selectedStatus = "Present"
-                    }
+                    ) { onSelectStatus("Present") }
 
                     Spacer(modifier = Modifier.width(16.dp))
 
@@ -143,38 +179,19 @@ fun MarkAttendanceScreen(
                         selected = selectedStatus == "Absent",
                         color = ErrorRed,
                         modifier = Modifier.weight(1f)
-                    ) {
-                        selectedStatus = "Absent"
-                    }
-                }
-
-                Spacer(modifier = Modifier.height(24.dp))
-
-                if (selectedStatus != null) {
-                    Text(
-                        text = "Selected: $selectedStatus",
-                        fontWeight = FontWeight.Medium,
-                        color = PrimaryDarkNavy
-                    )
+                    ) { onSelectStatus("Absent") }
                 }
 
                 Spacer(modifier = Modifier.height(24.dp))
 
                 Button(
-                    onClick = {
-                        if (selectedStatus != null && selectedDateKey != null) {
-                            viewModel.markAttendance(selectedDateKey, selectedStatus!!)
-                            navController.popBackStack()
-                        }
-                    },
+                    onClick = onSave,
                     enabled = selectedStatus != null && !state.isLoading,
                     modifier = Modifier
                         .fillMaxWidth()
                         .height(50.dp),
                     shape = RoundedCornerShape(12.dp),
-                    colors = ButtonDefaults.buttonColors(
-                        containerColor = PrimaryDarkNavy
-                    )
+                    colors = ButtonDefaults.buttonColors(containerColor = PrimaryDarkNavy)
                 ) {
                     if (state.isLoading) {
                         CircularProgressIndicator(
@@ -188,7 +205,6 @@ fun MarkAttendanceScreen(
             }
         }
 
-        // Date Picker Dialog
         if (showDatePicker) {
 
             val datePickerState = rememberDatePickerState(
@@ -196,19 +212,16 @@ fun MarkAttendanceScreen(
             )
 
             DatePickerDialog(
-                onDismissRequest = { showDatePicker = false },
+                onDismissRequest = onDismissDatePicker,
                 confirmButton = {
                     TextButton(onClick = {
-                        selectedDateMillis =
-                            datePickerState.selectedDateMillis
-                        selectedStatus = null
-                        showDatePicker = false
+                        onConfirmDate(datePickerState.selectedDateMillis)
                     }) {
                         Text("OK")
                     }
                 },
                 dismissButton = {
-                    TextButton(onClick = { showDatePicker = false }) {
+                    TextButton(onClick = onDismissDatePicker) {
                         Text("Cancel")
                     }
                 }
@@ -222,7 +235,6 @@ fun MarkAttendanceScreen(
     }
 }
 
-
 @Composable
 fun AttendanceOptionButton(
     text: String,
@@ -231,7 +243,6 @@ fun AttendanceOptionButton(
     modifier: Modifier = Modifier,
     onClick: () -> Unit
 ) {
-
     Button(
         onClick = onClick,
         modifier = modifier,
@@ -246,4 +257,22 @@ fun AttendanceOptionButton(
             fontWeight = FontWeight.Bold
         )
     }
+}
+
+@Preview(showBackground = true)
+@Composable
+fun MarkAttendancePreview() {
+    MarkAttendanceContent(
+        state = AttendanceState(),
+        selectedDateDisplay = "Monday, 12 Feb 2026",
+        selectedDateKey = "2026-02-12",
+        existingRecordStatus = null,
+        selectedStatus = "Present",
+        onSelectDate = {},
+        onSelectStatus = {},
+        onSave = {},
+        showDatePicker = false,
+        onDismissDatePicker = {},
+        onConfirmDate = {}
+    )
 }
