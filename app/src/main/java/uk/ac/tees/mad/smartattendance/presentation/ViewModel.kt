@@ -1,6 +1,8 @@
 package uk.ac.tees.mad.smartattendance.presentation
 
+import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.setValue
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.google.firebase.auth.FirebaseAuth
@@ -16,6 +18,9 @@ class AppViewModel(
 ) : ViewModel() {
 
     private val auth = FirebaseAuth.getInstance()
+
+    var isLoading by mutableStateOf(true)
+        private set
 
 
     private val _loginScreenState = mutableStateOf(LogInScreenState())
@@ -99,6 +104,7 @@ class AppViewModel(
         attendanceJob?.cancel()
 
         attendanceJob = viewModelScope.launch {
+            isLoading = true
             repo.observeAttendance().collect { result ->
                 when (result) {
 
@@ -129,11 +135,13 @@ class AppViewModel(
                                 absentDays = absentDays,
                                 percentage = percentage
                             )
+                        isLoading = false
                     }
 
                     is ResultState.error -> {
                         _attendanceState.value =
                             AttendanceState(error = result.message)
+                        isLoading = false
                     }
                 }
             }

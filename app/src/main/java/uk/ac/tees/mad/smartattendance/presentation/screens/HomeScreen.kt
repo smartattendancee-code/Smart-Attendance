@@ -47,17 +47,28 @@ fun HomeScreen(
     val todayRecord = state.records.find { it.date == todayDateKey }
     val todayStatus = todayRecord?.status ?: "Not Marked"
 
-    HomeContent(
-        date = todayDateDisplay,
-        status = todayStatus,
-        attendanceState = state,
-        onMarkAttendance = {
-            navController.navigate(NavRoutes.MARK_ATTENDANCE)
-        },
-        onSettingsClick = {
-            navController.navigate(NavRoutes.SETTINGS)
+    if (viewModel.isLoading) {
+        Box(
+            modifier = Modifier.fillMaxSize(),
+            contentAlignment = Alignment.Center
+        ) {
+            CircularProgressIndicator(
+                color = MaterialTheme.colorScheme.primary
+            )
         }
-    )
+    } else {
+        HomeContent(
+            date = todayDateDisplay,
+            status = todayStatus,
+            attendanceState = state,
+            onMarkAttendance = {
+                navController.navigate(NavRoutes.MARK_ATTENDANCE)
+            },
+            onSettingsClick = {
+                navController.navigate(NavRoutes.SETTINGS)
+            }
+        )
+    }
 }
 
 @OptIn(ExperimentalMaterial3Api::class)
