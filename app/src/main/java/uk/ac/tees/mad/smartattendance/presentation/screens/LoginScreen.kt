@@ -43,15 +43,18 @@ fun LoginScreen(
     }
 
     LoginContent(
+        viewModel = viewModel,
         email = email,
         onEmailChange = {
             email = it
             errorMessage = ""
+            viewModel.emailError = ""
         },
         password = password,
         onPasswordChange = {
             password = it
             errorMessage = ""
+            viewModel.passwordError = ""
         },
         isLoading = state.isLoading,
         errorMessage = state.error ?: errorMessage,
@@ -72,6 +75,7 @@ fun LoginScreen(
 
 @Composable
 fun LoginContent(
+    viewModel: AppViewModel? = null,
     email: String,
     onEmailChange: (String) -> Unit,
     password: String,
@@ -131,6 +135,12 @@ fun LoginContent(
                     label = { Text("Email") },
                     singleLine = true,
                     shape = RoundedCornerShape(14.dp),
+                    isError = viewModel?.emailError?.isNotEmpty() == true,
+                    supportingText = {
+                        if (viewModel?.emailError?.isNotEmpty() == true) {
+                            Text(text = viewModel.emailError, color = MaterialTheme.colorScheme.error)
+                        }
+                    },
                     keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Email),
                     modifier = Modifier.fillMaxWidth(),
                     colors = OutlinedTextFieldDefaults.colors(
@@ -148,6 +158,12 @@ fun LoginContent(
                     label = { Text("Password") },
                     singleLine = true,
                     shape = RoundedCornerShape(14.dp),
+                    isError = viewModel?.passwordError?.isNotEmpty() == true,
+                    supportingText = {
+                        if (viewModel?.passwordError?.isNotEmpty() == true) {
+                            Text(text = viewModel.passwordError, color = MaterialTheme.colorScheme.error)
+                        }
+                    },
                     visualTransformation = PasswordVisualTransformation(),
                     modifier = Modifier.fillMaxWidth(),
                     colors = OutlinedTextFieldDefaults.colors(

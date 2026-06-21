@@ -22,11 +22,35 @@ class AppViewModel(
     var isLoading by mutableStateOf(true)
         private set
 
+    var emailError by mutableStateOf("")
+
+    var passwordError by mutableStateOf("")
+
 
     private val _loginScreenState = mutableStateOf(LogInScreenState())
     val loginScreenState = _loginScreenState
 
+    fun validateLoginInput(email: String, password: String): Boolean {
+        var valid = true
+
+        emailError = when {
+            email.isBlank() -> { valid = false; "Email cannot be empty" }
+            !android.util.Patterns.EMAIL_ADDRESS.matcher(email).matches() ->
+                { valid = false; "Enter a valid email address" }
+            else -> ""
+        }
+
+        passwordError = when {
+            password.isBlank() -> { valid = false; "Password cannot be empty" }
+            password.length < 6 -> { valid = false; "Password must be at least 6 characters" }
+            else -> ""
+        }
+
+        return valid
+    }
+
     fun loginUser(userData: UserData) {
+        if (!validateLoginInput(userData.email, userData.password)) return
         viewModelScope.launch {
             repo.loginuserwithemailandpassword(userData).collect { result ->
                 when (result) {
