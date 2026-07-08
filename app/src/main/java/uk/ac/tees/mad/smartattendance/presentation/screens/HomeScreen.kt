@@ -148,15 +148,16 @@ fun HomeContent(
 
                     Spacer(modifier = Modifier.height(8.dp))
 
+                    val statusColor = when (status) {
+                        "Present" -> Color(0xFF4CAF50)
+                        "Absent"  -> Color(0xFFF44336)
+                        else      -> MaterialTheme.colorScheme.onSurface.copy(alpha = 0.5f)
+                    }
+
                     Text(
-                        text = status,
-                        style = MaterialTheme.typography.headlineMedium,
-                        color = when (status) {
-                            "Present" -> Color(0xFF4CAF50)
-                            "Absent" -> ErrorRed
-                            else -> PrimaryNavy
-                        },
-                        fontWeight = FontWeight.Bold
+                        text = status.ifBlank { "Not Marked" },
+                        style = MaterialTheme.typography.titleLarge.copy(fontWeight = FontWeight.Bold),
+                        color = statusColor
                     )
 
                     Spacer(modifier = Modifier.height(24.dp))
