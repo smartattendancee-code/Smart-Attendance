@@ -8,6 +8,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -75,7 +76,46 @@ fun SettingContent(
 
             Spacer(modifier = Modifier.height(32.dp))
 
+            var showClearCacheDialog by remember { mutableStateOf(false) }
 
+            Button(
+                onClick = { showClearCacheDialog = true },
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .height(55.dp),
+                shape = RoundedCornerShape(16.dp),
+                colors = ButtonDefaults.buttonColors(
+                    containerColor = PrimaryNavy
+                )
+            ) {
+                Text(
+                    text = "Clear Local Cache",
+                    color = Color.White
+                )
+            }
+
+            if (showClearCacheDialog) {
+                AlertDialog(
+                    onDismissRequest = { showClearCacheDialog = false },
+                    title = { Text("Clear Local Cache") },
+                    text = { Text("This will remove all locally stored attendance data. Are you sure?") },
+                    confirmButton = {
+                        TextButton(
+                            onClick = {
+                                showClearCacheDialog = false
+                                onClearLocal()
+                            }
+                        ) {
+                            Text("Clear", color = MaterialTheme.colorScheme.error)
+                        }
+                    },
+                    dismissButton = {
+                        TextButton(onClick = { showClearCacheDialog = false }) {
+                            Text("Cancel")
+                        }
+                    }
+                )
+            }
 
             Spacer(modifier = Modifier.height(16.dp))
 
